@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Product } from './product.entity';
 
 @Injectable()
@@ -24,8 +24,20 @@ export class ProductService {
         return await this.productRepository.findOne(id)
     }
 
-    getAlmostExpired(): Promise<Product[]>{
-        return undefined
+    async getAlmostExpired(): Promise<Product[]>{
+        const ids = await this.productRepository.createQueryBuilder('product')
+            .leftJoinAndSelect('product.batchs', 'batch')
+            .where('batch.expired_at < :time')
+            .setParameter('time', new Date().getTime() + 259200000)
+            .select('product.id')
+            .getMany()
+
+        return await this.productRepository.find({
+            where: {
+                id: In(ids)
+            },
+            relations: ['batchs']
+        })
     }
 
     create(): Promise<Product>{
