@@ -20,7 +20,7 @@ export class ProductService {
             .getMany()
     }
 
-    getOne(): Promise<Product>{
+    getOne(id: number): Promise<Product>{
         return undefined
     }
 

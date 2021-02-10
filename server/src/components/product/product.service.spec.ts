@@ -9,6 +9,7 @@ describe('ProductService', () => {
 
   const mockRepository = {
     find: jest.fn(),
+    findOne: jest.fn(),
     createQueryBuilder: jest.fn()
   }
 
@@ -139,6 +140,53 @@ describe('ProductService', () => {
 
       expect(products).toHaveLength(0)
       expect(products).toEqual([])
+    });
+
+    beforeEach(() => {
+      jest.clearAllMocks()
+    })
+  })
+
+  describe('getOne', () => {
+    const mockProduct = {
+      id: 1,
+      name: 'Banane',
+      batchs: [
+        {
+          id: 1,
+          category: {
+            id: 1,
+            name: 'Fruit'
+          },
+          quantity: 3
+        } as Batch
+      ]
+    } as Product
+
+    it('should return one product', async () => {
+      jest.spyOn(mockRepository, 'findOne').mockReturnValue(mockProduct)
+
+      expect(mockRepository.findOne).not.toHaveBeenCalled();
+
+      const product = await service.getOne(3)
+
+      expect(mockRepository.findOne).toHaveBeenCalled();
+      expect(mockRepository.findOne).toHaveBeenCalledWith(3);
+
+      expect(product).toEqual(mockProduct)
+    });
+
+    it('should return nothing', async () => {
+      jest.spyOn(mockRepository, 'findOne').mockReturnValue([])
+
+      expect(mockRepository.findOne).not.toHaveBeenCalled();
+
+      const product = await service.getOne(7)
+
+      expect(mockRepository.findOne).toHaveBeenCalled();
+      expect(mockRepository.findOne).toHaveBeenCalledWith(3);
+
+      expect(product).toEqual([])
     });
 
     beforeEach(() => {
