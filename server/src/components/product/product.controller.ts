@@ -4,7 +4,7 @@ import { ProductService } from './product.service';
 
 @Controller('product')
 export class ProductController {
-    constructor(private productService: ProductService){}
+    constructor(private readonly productService: ProductService){}
 
     getAll(): Promise<Product[]> {
         return this.productService.getAll()
