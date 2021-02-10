@@ -1,13 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Home renderer 1`] = `
-<div>
-  <View>
-    <Text>
-      Home
-    </Text>
-  </View>
-</div>
+<View>
+  <Text>
+    Home
+  </Text>
+</View>
 `;
 
 exports[`Test 1`] = `

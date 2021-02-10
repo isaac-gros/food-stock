@@ -2,6 +2,11 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import HomeScreen from '../src/screens/HomeScreen';
 
+/**
+ * To remove the obselete test : npm test -- -u
+ */
+
+
 // Test to Renderer JSX
 test("Test", ()=> {
 	const snap = renderer.create(
@@ -13,7 +18,7 @@ test("Test", ()=> {
 // Test to renderer the Home screen
 test('Home renderer', () => {
 	const snap = renderer.create(
-		<div><HomeScreen /></div>
+		<HomeScreen />
 	).toJSON();
 	expect(snap).toMatchSnapshot();
 });
