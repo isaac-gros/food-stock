@@ -8,7 +8,14 @@ describe('ProductService', () => {
   let service: ProductService;
 
   const mockRepository = {
-    find: jest.fn()
+    find: jest.fn(),
+    createQueryBuilder: jest.fn()
+  }
+
+  const mockQueryBuilder = {
+    leftJoin: jest.fn(),
+    where: jest.fn(),
+    getMany: jest.fn()
   }
 
   const mockedProducts = [
@@ -69,6 +76,10 @@ describe('ProductService', () => {
     service = module.get<ProductService>(ProductService);
   });
 
+  afterEach(() => {
+    jest.clearAllTimers()
+  })
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
@@ -88,5 +99,53 @@ describe('ProductService', () => {
       });
       expect(products).toEqual(mockedProducts)
     });
+  })
+
+  describe('getAllInStock', () => {
+    it('should return all products with stock', async () => {
+      jest.spyOn(mockRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder)
+      jest.spyOn(mockQueryBuilder, 'leftJoin').mockReturnThis()
+      jest.spyOn(mockQueryBuilder, 'where').mockReturnThis()
+      jest.spyOn(mockQueryBuilder, 'getMany').mockResolvedValue(
+        mockedProducts.map(product => product.batchs.length > 0)
+        )
+
+      expect(mockRepository.createQueryBuilder).not.toHaveBeenCalled();
+      expect(mockRepository.createQueryBuilder().getMany).not.toHaveBeenCalled();
+
+      const products = await service.getAllInStock()
+
+      expect(mockRepository.createQueryBuilder().leftJoin).toHaveBeenCalled();
+      expect(mockRepository.createQueryBuilder().where).toHaveBeenCalled();
+      expect(mockRepository.createQueryBuilder().where).toHaveBeenCalledWith('batch.id IS NOT NULL');
+      expect(mockRepository.createQueryBuilder().getMany).toHaveBeenCalled();
+
+      expect(products).toEqual(mockedProducts)
+    });
+
+    it('should return nothing', async () => {
+      jest.spyOn(mockRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder)
+      jest.spyOn(mockQueryBuilder, 'leftJoin').mockReturnThis()
+      jest.spyOn(mockQueryBuilder, 'where').mockReturnThis()
+      jest.spyOn(mockQueryBuilder, 'getMany').mockResolvedValue(
+        mockedProducts.map(product => product.batchs.length <= 0)
+        )
+
+      expect(mockRepository.createQueryBuilder().getMany).not.toHaveBeenCalled();
+
+      const products = await service.getAllInStock()
+
+      expect(mockRepository.createQueryBuilder().leftJoin).toHaveBeenCalled();
+      expect(mockRepository.createQueryBuilder().where).toHaveBeenCalled();
+      expect(mockRepository.createQueryBuilder().where).toHaveBeenCalledWith('batch.id IS NOT NULL');
+      expect(mockRepository.createQueryBuilder().getMany).toHaveBeenCalled();
+
+      expect(products).toHaveLength(0)
+      expect(products).toEqual(mockedProducts)
+    });
+
+    afterEach(() => {
+      jest.clearAllTimers()
+    })
   })
 });
