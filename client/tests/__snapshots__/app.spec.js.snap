@@ -1,10 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Home renderer 1`] = `
+exports[`Products Should return products as props 1`] = `
 <View>
-  <Text>
-    Home
-  </Text>
+  <View>
+    <Text>
+      Banane
+    </Text>
+  </View>
+  <View>
+    <Text>
+      Steak
+    </Text>
+  </View>
+  <View>
+    <Text>
+      Truite
+    </Text>
+  </View>
 </View>
 `;
 

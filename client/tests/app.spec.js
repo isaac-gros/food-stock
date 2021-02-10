@@ -16,9 +16,12 @@ test("Test", ()=> {
 });
 
 // Test to renderer the Home screen
-test('Home renderer', () => {
-	const snap = renderer.create(
-		<HomeScreen />
-	).toJSON();
-	expect(snap).toMatchSnapshot();
+describe("Products", () => {
+	it('Should return products as props', () => {
+		// Pass arr to  props
+		const snap = renderer.create(
+			<HomeScreen/>
+		).toJSON();
+		expect(snap).toMatchSnapshot();
+	});
 });

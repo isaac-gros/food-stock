@@ -20,3 +20,8 @@ If already have an active port
 sudo lsof -i :port
 sudo kill {pid}
 ```
+
+If already have an active id
+```
+docker rm {container_id}
+```
