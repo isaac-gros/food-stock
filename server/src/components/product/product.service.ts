@@ -13,8 +13,11 @@ export class ProductService {
           })
     }
 
-    getAllInStock(): Promise<Product[]>{
-        return undefined
+    async getAllInStock(): Promise<Product[]>{
+        return await this.productRepository.createQueryBuilder('product')
+            .leftJoinAndSelect('product.batchs', 'batch')
+            .where('batch.id IS NOT NULL')
+            .getMany()
     }
 
     getOne(): Promise<Product>{
