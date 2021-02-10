@@ -3,6 +3,10 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ProductModule } from './components/product/product.module';
+import { BatchModule } from './components/batch/batch.module';
+import { UserModule } from './components/user/user.module';
+import { CategoryModule } from './components/category/category.module';
 import { DatabaseModule } from './core/database.module';
 
 @Module({
@@ -18,9 +22,9 @@ import { DatabaseModule } from './core/database.module';
         DB_NAME: Joi.string()
       })
     }),
-    DatabaseModule
+    DatabaseModule, ProductModule, BatchModule, UserModule, CategoryModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
 export class AppModule {}
