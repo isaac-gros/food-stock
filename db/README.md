@@ -14,3 +14,9 @@ sudo docker run -d --name food-stock --env POSTGRES_PASSWORD=[password] -p 5432:
 ```
 
 Note: for data persistance you need to create a folder postgres-data
+
+If already have an active port
+```
+sudo lsof -i :port
+sudo kill {pid}
+```
