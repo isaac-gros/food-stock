@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Home renderer 1`] = `
+<div>
+  <View>
+    <Text>
+      Home
+    </Text>
+  </View>
+</div>
+`;
+
+exports[`Test 1`] = `
+<div>
+  <h1>
+    Hello World!
+  </h1>
+</div>
+`;
