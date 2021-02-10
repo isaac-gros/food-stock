@@ -16,7 +16,9 @@ describe('ProductService', () => {
   const mockQueryBuilder = {
     leftJoinAndSelect: jest.fn(),
     where: jest.fn(),
-    getMany: jest.fn()
+    getMany: jest.fn(),
+    select: jest.fn(),
+    setParameter: jest.fn()
   }
 
   const mockedProducts = [
@@ -187,6 +189,66 @@ describe('ProductService', () => {
       expect(mockRepository.findOne).toHaveBeenCalledWith(7);
 
       expect(product).toEqual([])
+    });
+
+    beforeEach(() => {
+      jest.clearAllMocks()
+    })
+  })
+
+  describe('getAlmostExpired', () => {
+    const mockProductExpired = [{
+      id: 1,
+      name: 'Banane',
+      batchs: [
+        {
+          id: 1,
+          expired_at: new Date().getTime() - 6000,
+          category: {
+            id: 1,
+            name: 'Fruit'
+          },
+          quantity: 3
+        } as Batch
+      ]
+    } as Product,
+    {
+      id: 2,
+      name: 'Steak',
+      batchs: [
+        {
+          id: 2,
+          expired_at: new Date().getTime() - 17000,
+          category: {
+            id: 2,
+            name: 'Viande'
+          },
+          quantity: 12
+        } as Batch
+      ]
+    } as Product]
+
+    it('should return products where the expiration date is under 3 days from now', async () => {
+      jest.spyOn(mockRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder)
+      jest.spyOn(mockQueryBuilder, 'leftJoinAndSelect').mockReturnThis()
+      jest.spyOn(mockQueryBuilder, 'setParameter').mockReturnThis()
+      jest.spyOn(mockQueryBuilder, 'select').mockReturnThis()
+      jest.spyOn(mockQueryBuilder, 'where').mockReturnThis()
+      jest.spyOn(mockQueryBuilder, 'getMany').mockResolvedValue([])
+      jest.spyOn(mockRepository, 'find').mockResolvedValue(mockProductExpired)
+
+      expect(mockRepository.createQueryBuilder().getMany).not.toHaveBeenCalled();
+      expect(mockRepository.find).not.toHaveBeenCalled();
+
+      const products = await service.getAlmostExpired()
+
+      expect(mockRepository.createQueryBuilder().leftJoinAndSelect).toHaveBeenCalled();
+      expect(mockRepository.createQueryBuilder().where).toHaveBeenCalled();
+      expect(mockRepository.createQueryBuilder().where).toHaveBeenCalledWith('batch.expired_at < :time');
+      expect(mockRepository.createQueryBuilder().getMany).toHaveBeenCalled();
+      expect(mockRepository.find).toHaveBeenCalled();
+
+      expect(products).toEqual(mockProductExpired)
     });
 
     beforeEach(() => {
