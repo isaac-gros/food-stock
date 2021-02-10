@@ -75,12 +75,12 @@ describe('ProductService', () => {
 
 
   describe('getAll', () => {
-    it('should return all products', () => {
+    it('should return all products', async () => {
       jest.spyOn(mockRepository, 'find').mockResolvedValue(mockedProducts)
 
       expect(mockRepository.find).not.toHaveBeenCalled();
 
-      const products = service.getAll()
+      const products = await service.getAll()
 
       expect(mockRepository.find).toHaveBeenCalled();
       expect(mockRepository.find).toHaveBeenCalledWith({
