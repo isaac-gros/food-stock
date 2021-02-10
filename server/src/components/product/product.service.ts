@@ -20,8 +20,8 @@ export class ProductService {
             .getMany()
     }
 
-    getOne(id: number): Promise<Product>{
-        return undefined
+    async getOne(id: number): Promise<Product>{
+        return await this.productRepository.findOne(id)
     }
 
     getAlmostExpired(): Promise<Product[]>{

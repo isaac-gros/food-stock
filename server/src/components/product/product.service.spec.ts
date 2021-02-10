@@ -184,7 +184,7 @@ describe('ProductService', () => {
       const product = await service.getOne(7)
 
       expect(mockRepository.findOne).toHaveBeenCalled();
-      expect(mockRepository.findOne).toHaveBeenCalledWith(3);
+      expect(mockRepository.findOne).toHaveBeenCalledWith(7);
 
       expect(product).toEqual([])
     });
