@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Product } from './product.entity';
@@ -17,6 +17,7 @@ export class ProductService {
         return await this.productRepository.createQueryBuilder('product')
             .leftJoinAndSelect('product.batchs', 'batch')
             .where('batch.id IS NOT NULL')
+            .orderBy('batch.expired_at', 'ASC')
             .getMany()
     }
 
@@ -41,7 +42,15 @@ export class ProductService {
     }
 
     async create(product: Product): Promise<Product>{
-        return await this.productRepository.save(product)
+        if (!product.name || product.name.trim() === "") throw new BadRequestException('Name need to be defined')
+        if (!product.name.match(/^[A-Za-z]+$/)) throw new BadRequestException('Only a-z character are allowed')
+        const retrievedProduct = await this.productRepository.findOne({
+            where: {
+                name: product.name.toLowerCase()
+            }
+        })
+        if (retrievedProduct) throw new InternalServerErrorException('Already exists')
+        return await this.productRepository.save({...product, name: product.name.toLowerCase()})
     }
 
     async delete(idProduct: number): Promise<Product>{
