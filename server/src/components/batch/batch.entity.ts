@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne, ManyToOne } from "typeorm"; 
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne, ManyToOne, CreateDateColumn } from "typeorm"; 
 import { Category } from "../category/category.entity";
 import { Product } from "../product/product.entity";
 import { User } from "../user/user.entity";
@@ -12,8 +12,8 @@ export class Batch {
    @Column() 
    quantity: number; 
    
-   @Column('timestamp') 
-   expired_at: number; 
+   @CreateDateColumn() 
+   expired_at: Date; 
 
    @ManyToOne(product => Product, product => product.batchs)
    @JoinColumn()

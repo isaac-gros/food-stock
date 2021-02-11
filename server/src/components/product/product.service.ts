@@ -28,13 +28,13 @@ export class ProductService {
         const ids = await this.productRepository.createQueryBuilder('product')
             .leftJoinAndSelect('product.batchs', 'batch')
             .where('batch.expired_at < :time')
-            .setParameter('time', new Date().getTime() + 259200000)
+            .setParameter('time', new Date(new Date().getTime() + 259200000))
             .select('product.id')
             .getMany()
 
         return await this.productRepository.find({
             where: {
-                id: In(ids)
+                id: In(ids.map(id => id.id))
             },
             relations: ['batchs']
         })
