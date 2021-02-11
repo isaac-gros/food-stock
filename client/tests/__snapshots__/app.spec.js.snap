@@ -1,10 +1,82 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Home renderer 1`] = `
+exports[`Products Should return an array of data 1`] = `
 <View>
-  <Text>
-    Home
-  </Text>
+  <View>
+    <Text>
+      Banane
+    </Text>
+  </View>
+  <View>
+    <Text>
+      Steak
+    </Text>
+  </View>
+  <View>
+    <Text>
+      Truite
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Products Should return starting value and updated value 1`] = `
+<View>
+  <View>
+    <Text>
+      Banane
+    </Text>
+  </View>
+  <View>
+    <Text>
+      Steak
+    </Text>
+  </View>
+  <View>
+    <Text>
+      Truite
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Products Should return starting value and updated value 2`] = `
+<View>
+  <View>
+    <Text>
+      Banane
+    </Text>
+  </View>
+  <View>
+    <Text>
+      Steak
+    </Text>
+  </View>
+  <View>
+    <Text>
+      Truite
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Products Should the Home 1`] = `
+<View>
+  <View>
+    <Text>
+      Banane
+    </Text>
+  </View>
+  <View>
+    <Text>
+      Steak
+    </Text>
+  </View>
+  <View>
+    <Text>
+      Truite
+    </Text>
+  </View>
 </View>
 `;
 
