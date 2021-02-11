@@ -173,7 +173,7 @@ describe('ProductController', () => {
       const products = await controller.delete(mockProduct.id)
 
       expect(mockService.delete).toHaveBeenCalled();
-      expect(mockService.delete).toHaveBeenCalledWith(mockProduct);
+      expect(mockService.delete).toHaveBeenCalledWith(mockProduct.id);
       expect(products).toEqual(mockProduct)
     });
   })
