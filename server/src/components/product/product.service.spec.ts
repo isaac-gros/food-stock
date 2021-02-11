@@ -10,7 +10,9 @@ describe('ProductService', () => {
   const mockRepository = {
     find: jest.fn(),
     findOne: jest.fn(),
-    createQueryBuilder: jest.fn()
+    createQueryBuilder: jest.fn(),
+    save: jest.fn(),
+    remove: jest.fn()
   }
 
   const mockQueryBuilder = {
@@ -64,6 +66,21 @@ describe('ProductService', () => {
       ]
     } as Product
   ]
+
+  const mockProduct = {
+    id: 1,
+    name: 'Banane',
+    batchs: [
+      {
+        id: 1,
+        category: {
+          id: 1,
+          name: 'Fruit'
+        },
+        quantity: 3
+      } as Batch
+    ]
+  } as Product
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -150,20 +167,7 @@ describe('ProductService', () => {
   })
 
   describe('getOne', () => {
-    const mockProduct = {
-      id: 1,
-      name: 'Banane',
-      batchs: [
-        {
-          id: 1,
-          category: {
-            id: 1,
-            name: 'Fruit'
-          },
-          quantity: 3
-        } as Batch
-      ]
-    } as Product
+    
 
     it('should return one product', async () => {
       jest.spyOn(mockRepository, 'findOne').mockReturnValue(mockProduct)
@@ -249,6 +253,44 @@ describe('ProductService', () => {
       expect(mockRepository.find).toHaveBeenCalled();
 
       expect(products).toEqual(mockProductExpired)
+    });
+
+    beforeEach(() => {
+      jest.clearAllMocks()
+    })
+  })
+
+  describe('create', () => {
+    it('should create a product', async () => {
+      jest.spyOn(mockRepository, 'save').mockReturnValue(mockProduct)
+
+      expect(mockRepository.save).not.toHaveBeenCalled();
+
+      const product = await service.create()
+
+      expect(mockRepository.save).toHaveBeenCalled();
+      expect(mockRepository.save).toHaveBeenCalledWith(mockProduct);
+
+      expect(product).toEqual(mockProduct)
+    });
+
+    beforeEach(() => {
+      jest.clearAllMocks()
+    })
+  })
+
+  describe('delete', () => {
+    it('should delete a product', async () => {
+      jest.spyOn(mockRepository, 'remove').mockReturnValue(mockProduct)
+
+      expect(mockRepository.remove).not.toHaveBeenCalled();
+
+      const product = await service.delete()
+
+      expect(mockRepository.remove).toHaveBeenCalled();
+      expect(mockRepository.remove).toHaveBeenCalledWith(mockProduct);
+
+      expect(product).toEqual(mockProduct)
     });
 
     beforeEach(() => {
