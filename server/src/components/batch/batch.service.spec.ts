@@ -168,6 +168,34 @@ describe('BatchService', () => {
       try {
         batch = await service.create(1, batchWithWrongQuantity)
       }catch(err){
+        expect(err.response.message).toEqual('Quantity not valid');
+        expect(mockRepository.save).not.toHaveBeenCalled();
+  
+        expect(batch).not.toBeDefined()
+      }
+    });
+
+    it('should fail creating a batch with expriration in past', async () => {
+      const batchWithWrongExpiration = {
+        category: {
+          id: 1,
+          name: 'Fruit'
+        },
+        product: {
+          id: 1
+        },
+        quantity: 4,
+        expired_at: new Date("2020-02-11T13:53:07.825012")
+      } as Batch
+      jest.spyOn(mockRepository, 'save').mockReturnValue(batchWithWrongExpiration)
+
+      expect(mockRepository.save).not.toHaveBeenCalled();
+
+      let batch
+      try {
+        batch = await service.create(1, batchWithWrongExpiration)
+      }catch(err){
+        expect(err.response.message).toEqual('Expiration need to be in future');
         expect(mockRepository.save).not.toHaveBeenCalled();
   
         expect(batch).not.toBeDefined()
@@ -220,6 +248,7 @@ describe('BatchService', () => {
       try {
         batch = await service.modify(1, { ...mockModifyBatch, quantity: -4})
       }catch(err){
+        expect(err.response.message).toEqual('Quantity not valid');
         expect(mockRepository.save).not.toHaveBeenCalled();
         expect(mockRepository.findOneOrFail).not.toHaveBeenCalled();
   
