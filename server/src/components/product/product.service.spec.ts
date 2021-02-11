@@ -20,7 +20,8 @@ describe('ProductService', () => {
     where: jest.fn(),
     getMany: jest.fn(),
     select: jest.fn(),
-    setParameter: jest.fn()
+    setParameter: jest.fn(),
+    orderBy: jest.fn()
   }
 
   const mockedProducts = [
@@ -69,7 +70,7 @@ describe('ProductService', () => {
 
   const mockProduct = {
     id: 1,
-    name: 'Banane',
+    name: 'banane',
     batchs: [
       {
         id: 1,
@@ -126,6 +127,7 @@ describe('ProductService', () => {
       jest.spyOn(mockRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder)
       jest.spyOn(mockQueryBuilder, 'leftJoinAndSelect').mockReturnThis()
       jest.spyOn(mockQueryBuilder, 'where').mockReturnThis()
+      jest.spyOn(mockQueryBuilder, 'orderBy').mockReturnThis()
       jest.spyOn(mockQueryBuilder, 'getMany').mockResolvedValue(
         mockedProducts.filter(product => product.batchs.length > 0)
         )
@@ -146,6 +148,7 @@ describe('ProductService', () => {
       jest.spyOn(mockRepository, 'createQueryBuilder').mockReturnValue(mockQueryBuilder)
       jest.spyOn(mockQueryBuilder, 'leftJoinAndSelect').mockReturnThis()
       jest.spyOn(mockQueryBuilder, 'where').mockReturnThis()
+      jest.spyOn(mockQueryBuilder, 'orderBy').mockReturnThis()
       jest.spyOn(mockQueryBuilder, 'getMany').mockResolvedValue([])
 
       expect(mockRepository.createQueryBuilder().getMany).not.toHaveBeenCalled();
@@ -262,16 +265,79 @@ describe('ProductService', () => {
 
   describe('create', () => {
     it('should create a product', async () => {
-      jest.spyOn(mockRepository, 'save').mockReturnValue(mockProduct)
+      jest.spyOn(mockRepository, 'findOne').mockReturnValue(undefined)
+      jest.spyOn(mockRepository, 'save').mockReturnValue({
+        name: "steack"
+      })
 
       expect(mockRepository.save).not.toHaveBeenCalled();
 
-      const product = await service.create(mockProduct)
+      const product = await service.create({
+        name: "Steack"
+      } as Product)
 
       expect(mockRepository.save).toHaveBeenCalled();
-      expect(mockRepository.save).toHaveBeenCalledWith(mockProduct);
 
-      expect(product).toEqual(mockProduct)
+      expect(product).toEqual({
+        name: "steack"
+      })
+    });
+
+    it('should fail creating a product because of empty name', async () => {
+      expect(mockRepository.save).not.toHaveBeenCalled();
+
+      let product
+
+      try{
+        product = await service.create({
+          name: ""
+        } as Product)
+      }catch(err){
+        expect(err.response.message).toEqual('Name need to be defined');
+        expect(mockRepository.save).not.toHaveBeenCalled();
+  
+        expect(product).not.toBeDefined()
+      }
+    });
+
+    it('should fail creating a product because of unwanted character in name', async () => {
+      expect(mockRepository.save).not.toHaveBeenCalled();
+
+      let product
+      
+      try{
+        product = await service.create({
+          name: "banane0-"
+        } as Product)
+      }catch(err){
+        expect(err.response.message).toEqual('Only a-z character are allowed');
+        expect(mockRepository.save).not.toHaveBeenCalled();
+  
+        expect(product).not.toBeDefined()
+      }
+    });
+
+    it('should fail creating a product because already exists (name)', async () => {
+      jest.spyOn(mockRepository, 'findOne').mockReturnValue({
+        name: 'test'
+      })
+      jest.spyOn(mockRepository, 'save').mockReturnValue({
+        name: 'test'
+      })
+      expect(mockRepository.save).not.toHaveBeenCalled();
+
+      let product
+      
+      try{
+        product = await service.create({
+          name: 'test'
+        } as Product)
+      }catch(err){
+        expect(err.response.message).toEqual('Already exists');
+        expect(mockRepository.save).not.toHaveBeenCalled();
+  
+        expect(product).not.toBeDefined()
+      }
     });
 
     beforeEach(() => {
