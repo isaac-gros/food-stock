@@ -21,6 +21,7 @@ export class BatchService {
 
     async create(productId: number, batch: Batch): Promise<Batch> {
         if (batch.quantity < 0) throw new BadRequestException('Quantity not valid')
+        if (batch.expired_at && batch.expired_at.getTime() <= new Date().getTime()) throw new BadRequestException('Expiration need to be in future')
         return await this.batchRepository.save({ ...batch, product: {id: productId}})
     }
 
