@@ -4,7 +4,7 @@ import { ProductService } from './product.service';
 
 @Controller('product')
 export class ProductController {
-    constructor(private productService: ProductService){}
+    constructor(private readonly productService: ProductService){}
 
     getAll(): Promise<Product[]> {
         return this.productService.getAll()
@@ -14,19 +14,19 @@ export class ProductController {
         return this.productService.getAllInStock()
     }
 
-    getOne(): Promise<Product> {
-        return this.productService.getOne()
+    getOne(id: number): Promise<Product> {
+        return this.productService.getOne(id)
     }
 
     getAlmostExpired(): Promise<Product[]> {
         return this.productService.getAlmostExpired()
     }
 
-    create(): Promise<Product> {
-        return this.productService.create()
+    create(product: Product): Promise<Product> {
+        return this.productService.create(product)
     }
 
-    delete(): Promise<Product> {
-        return this.productService.delete()
+    delete(idProduct: number): Promise<Product> {
+        return this.productService.delete(idProduct)
     }
 }

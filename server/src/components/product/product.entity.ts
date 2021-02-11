@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne } from "typeorm"; 
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne, OneToMany } from "typeorm"; 
+import { Batch } from "../batch/batch.entity";
 
 @Entity() 
 export class Product {   
@@ -11,4 +12,7 @@ export class Product {
    
    @Column('timestamp') 
    created_at: number;
+
+   @OneToMany(batch => Batch, batch => batch.product)
+   batchs: Batch[];
 }

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne } from "typeorm"; 
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, OneToOne, ManyToOne } from "typeorm"; 
 import { Category } from "../category/category.entity";
 import { Product } from "../product/product.entity";
 import { User } from "../user/user.entity";
@@ -15,10 +15,10 @@ export class Batch {
    @Column('timestamp') 
    expired_at: number; 
 
-   @OneToOne(() => Product)
+   @ManyToOne(product => Product, product => product.batchs)
    @JoinColumn()
    product: Product;
-
+   
    @OneToOne(() => User)
    @JoinColumn()
    user: User;

@@ -1,29 +1,50 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { In, Repository } from 'typeorm';
 import { Product } from './product.entity';
 
 @Injectable()
 export class ProductService {
-    getAll(): Promise<Product[]>{
-        return undefined
+    constructor(@InjectRepository(Product) public productRepository: Repository<Product>){}
+
+    async getAll(): Promise<Product[]>{
+        return await this.productRepository.find({
+            relations: ['batchs']
+          })
     }
 
-    getAllInStock(): Promise<Product[]>{
-        return undefined
+    async getAllInStock(): Promise<Product[]>{
+        return await this.productRepository.createQueryBuilder('product')
+            .leftJoinAndSelect('product.batchs', 'batch')
+            .where('batch.id IS NOT NULL')
+            .getMany()
     }
 
-    getOne(): Promise<Product>{
-        return undefined
+    async getOne(id: number): Promise<Product>{
+        return await this.productRepository.findOne(id)
     }
 
-    getAlmostExpired(): Promise<Product[]>{
-        return undefined
+    async getAlmostExpired(): Promise<Product[]>{
+        const ids = await this.productRepository.createQueryBuilder('product')
+            .leftJoinAndSelect('product.batchs', 'batch')
+            .where('batch.expired_at < :time')
+            .setParameter('time', new Date().getTime() + 259200000)
+            .select('product.id')
+            .getMany()
+
+        return await this.productRepository.find({
+            where: {
+                id: In(ids)
+            },
+            relations: ['batchs']
+        })
     }
 
-    create(): Promise<Product>{
-        return undefined
+    async create(product: Product): Promise<Product>{
+        return await this.productRepository.save(product)
     }
 
-    delete(): Promise<Product>{
-        return undefined
+    async delete(idProduct: number): Promise<Product>{
+        return await this.productRepository.remove({ id: idProduct } as Product)
     }
 }
