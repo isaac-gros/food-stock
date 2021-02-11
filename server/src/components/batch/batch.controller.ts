@@ -4,7 +4,7 @@ import { BatchService } from './batch.service';
 
 @Controller('/product/:productId/batch')
 export class BatchController{
-    constructor(private batchService: BatchService){}
+    constructor(private readonly batchService: BatchService){}
 
     create(): Promise<Batch> {
         return this.batchService.create()
