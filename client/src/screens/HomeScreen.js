@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text } from 'react-native';
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -50,6 +50,7 @@ class HomeScreen extends React.Component {
     };
   }
 
+  // data when page has been loaded
   componentDidMount() {
     if (undefined != this.props.value) { console.log(this.props.value); }
   }
