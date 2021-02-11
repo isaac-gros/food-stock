@@ -19,9 +19,9 @@ export class BatchService {
         return await this.batchRepository.findOne(id)
     }
 
-    async create(batch: Batch): Promise<Batch> {
+    async create(productId: number, batch: Batch): Promise<Batch> {
         if (batch.quantity < 0) throw new BadRequestException('Quantity not valid')
-        return await this.batchRepository.save(batch)
+        return await this.batchRepository.save({ ...batch, product: {id: productId}})
     }
 
     async modify(id: number, batch: Batch): Promise<Batch> {

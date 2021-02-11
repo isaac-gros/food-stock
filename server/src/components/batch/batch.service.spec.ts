@@ -137,16 +137,16 @@ describe('BatchService', () => {
 
   describe('create', () => {
     it('should create a batch', async () => {
-      jest.spyOn(mockRepository, 'save').mockReturnValue(mockBatch)
+      jest.spyOn(mockRepository, 'save').mockReturnValue({ product: {id: 1}, ...mockBatch })
 
       expect(mockRepository.save).not.toHaveBeenCalled();
 
-      const batch = await service.create(mockBatch)
+      const batch = await service.create(1, mockBatch)
 
       expect(mockRepository.save).toHaveBeenCalled();
-      expect(mockRepository.save).toHaveBeenCalledWith(mockBatch);
+      expect(mockRepository.save).toHaveBeenCalledWith({ product: {id: 1}, ...mockBatch });
 
-      expect(batch).toEqual(mockBatch)
+      expect(batch).toEqual({ product: {id: 1}, ...mockBatch })
     });
 
     it('should fail creating a batch with unvalid quantity', async () => {
@@ -166,7 +166,7 @@ describe('BatchService', () => {
 
       let batch
       try {
-        batch = await service.create(batchWithWrongQuantity)
+        batch = await service.create(1, batchWithWrongQuantity)
       }catch(err){
         expect(mockRepository.save).not.toHaveBeenCalled();
   

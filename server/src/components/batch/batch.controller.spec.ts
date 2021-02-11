@@ -45,15 +45,15 @@ describe('BatchController', () => {
 
   describe('create', () => {
     it('should create a batch', async () => {
-      jest.spyOn(mockService, 'create').mockResolvedValue(mockBatch)
+      jest.spyOn(mockService, 'create').mockResolvedValue({ product: {id: 1}, ...mockBatch})
 
       expect(mockService.create).not.toHaveBeenCalled();
 
-      const batch = await controller.create(mockBatch)
+      const batch = await controller.create(1, mockBatch)
 
       expect(mockService.create).toHaveBeenCalled();
-      expect(mockService.create).toHaveBeenCalledWith(mockBatch);
-      expect(batch).toEqual(mockBatch)
+      expect(mockService.create).toHaveBeenCalledWith(1, mockBatch);
+      expect(batch).toEqual({ product: {id: 1}, ...mockBatch})
     });
   })
 
