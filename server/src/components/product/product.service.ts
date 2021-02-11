@@ -40,11 +40,11 @@ export class ProductService {
         })
     }
 
-    create(): Promise<Product>{
-        return undefined
+    async create(product: Product): Promise<Product>{
+        return await this.productRepository.save(product)
     }
 
-    delete(): Promise<Product>{
-        return undefined
+    async delete(idProduct: number): Promise<Product>{
+        return await this.productRepository.remove({ id: idProduct } as Product)
     }
 }

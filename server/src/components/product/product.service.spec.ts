@@ -266,7 +266,7 @@ describe('ProductService', () => {
 
       expect(mockRepository.save).not.toHaveBeenCalled();
 
-      const product = await service.create()
+      const product = await service.create(mockProduct)
 
       expect(mockRepository.save).toHaveBeenCalled();
       expect(mockRepository.save).toHaveBeenCalledWith(mockProduct);
@@ -285,10 +285,10 @@ describe('ProductService', () => {
 
       expect(mockRepository.remove).not.toHaveBeenCalled();
 
-      const product = await service.delete()
+      const product = await service.delete(mockProduct.id)
 
       expect(mockRepository.remove).toHaveBeenCalled();
-      expect(mockRepository.remove).toHaveBeenCalledWith(mockProduct);
+      expect(mockRepository.remove).toHaveBeenCalledWith({ id: mockProduct.id });
 
       expect(product).toEqual(mockProduct)
     });
