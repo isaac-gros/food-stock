@@ -51,11 +51,16 @@ class HomeScreen extends React.Component {
   }
 
   componentDidMount() {
-    // console.log(this.props.data);
+    if (undefined != this.props.value) { console.log(this.props.value); }
+  }
+
+  // The props has been updated
+  componentDidUpdate() {
+    if (undefined != this.props.value) { console.log(this.props.value); }
   }
 
   render() {
-    const { data } = this.state;
+    const data = (this.props.data && this.props.data.length > 0) ? this.props.data : this.state.data;
 
     return (
       <View>
