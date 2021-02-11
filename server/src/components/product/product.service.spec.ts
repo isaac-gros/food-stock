@@ -213,7 +213,7 @@ describe('ProductService', () => {
             name: 'Fruit'
           },
           quantity: 3
-        } as Batch
+        } as unknown as Batch
       ]
     } as Product,
     {
@@ -228,7 +228,7 @@ describe('ProductService', () => {
             name: 'Viande'
           },
           quantity: 12
-        } as Batch
+        } as unknown as Batch
       ]
     } as Product]
 
