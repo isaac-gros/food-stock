@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Delete, Post, Put } from '@nestjs/common';
 import { Batch } from './batch.entity';
 import { BatchService } from './batch.service';
 
@@ -6,15 +6,18 @@ import { BatchService } from './batch.service';
 export class BatchController{
     constructor(private readonly batchService: BatchService){}
 
-    create(): Promise<Batch> {
-        return this.batchService.create()
+    @Post()
+    create(batch: Batch): Promise<Batch> {
+        return this.batchService.create(batch)
     }
 
-    modify(): Promise<Batch> {
-        return this.batchService.modify()
+    @Put()
+    modify(id: number, batch: Batch): Promise<Batch> {
+        return this.batchService.modify(id, batch)
     }
 
-    delete(): Promise<Batch> {
-        return this.batchService.delete()
+    @Delete()
+    delete(id: number): Promise<Batch> {
+        return this.batchService.delete(id)
     }
 }
