@@ -8,6 +8,7 @@ describe('BatchService', () => {
 
   const mockRepository = {
     find: jest.fn(),
+    findOneOrFail: jest.fn(),
     findOne: jest.fn(),
     save: jest.fn(),
     remove: jest.fn(),
@@ -44,7 +45,7 @@ describe('BatchService', () => {
   });
 
   describe('getAll', () => {
-    it('should return all batchs sorted by expiration date', async () => {
+    it('should return all batchs', async () => {
       jest.spyOn(mockRepository, 'find').mockResolvedValue([
         {
           id: 1,
@@ -89,12 +90,16 @@ describe('BatchService', () => {
       const batchs = await service.getAll()
 
       expect(mockRepository.find).toHaveBeenCalled();
-      expect(mockRepository.find).toHaveBeenCalledWith();
+      expect(mockRepository.find).toHaveBeenCalledWith({
+        order: {
+            expired_at: 'ASC'
+        }
+    });
 
       expect(batchs).toHaveLength(3)
-      expect(batchs[0].id).toEqual(2)
-      expect(batchs[1].id).toEqual(3)
-      expect(batchs[2].id).toEqual(1)
+      expect(batchs[0].id).toEqual(1)
+      expect(batchs[1].id).toEqual(2)
+      expect(batchs[2].id).toEqual(3)
     });
   })
 
@@ -163,8 +168,7 @@ describe('BatchService', () => {
       try {
         batch = await service.create(batchWithWrongQuantity)
       }catch(err){
-        expect(mockRepository.save).toHaveBeenCalled();
-        expect(mockRepository.save).toHaveBeenCalledWith(batchWithWrongQuantity);
+        expect(mockRepository.save).not.toHaveBeenCalled();
   
         expect(batch).not.toBeDefined()
       }
@@ -190,36 +194,34 @@ describe('BatchService', () => {
     
     it('should update a batch', async () => {
       jest.spyOn(mockRepository, 'save').mockReturnValue(mockModifyBatch)
-      jest.spyOn(mockRepository, 'findOne').mockReturnValue(mockModifyBatch)
+      jest.spyOn(mockRepository, 'findOneOrFail').mockReturnValue(mockModifyBatch)
 
       expect(mockRepository.save).not.toHaveBeenCalled();
-      expect(mockRepository.findOne).not.toHaveBeenCalled();
+      expect(mockRepository.findOneOrFail).not.toHaveBeenCalled();
 
       const batch = await service.modify(1, mockModifyBatch)
 
       expect(mockRepository.save).toHaveBeenCalled();
       expect(mockRepository.save).toHaveBeenCalledWith({ id: 1, ...mockModifyBatch});
-      expect(mockRepository.findOne).toHaveBeenCalled();
-      expect(mockRepository.findOne).toHaveBeenCalledWith(1);
+      expect(mockRepository.findOneOrFail).toHaveBeenCalled();
+      expect(mockRepository.findOneOrFail).toHaveBeenCalledWith(1);
 
       expect(batch).toEqual(mockModifyBatch)
     });
 
     it('should fail updating a batch because of unauthorized quantity', async () => {
       jest.spyOn(mockRepository, 'save').mockReturnValue({ ...mockModifyBatch, quantity: -4})
-      jest.spyOn(mockRepository, 'findOne').mockReturnValue({ ...mockModifyBatch, quantity: -4})
+      jest.spyOn(mockRepository, 'findOneOrFail').mockReturnValue({ ...mockModifyBatch, quantity: -4})
 
       expect(mockRepository.save).not.toHaveBeenCalled();
-      expect(mockRepository.findOne).not.toHaveBeenCalled();
+      expect(mockRepository.findOneOrFail).not.toHaveBeenCalled();
 
       let batch
       try {
         batch = await service.modify(1, { ...mockModifyBatch, quantity: -4})
       }catch(err){
-        expect(mockRepository.save).toHaveBeenCalled();
-        expect(mockRepository.save).toHaveBeenCalledWith({ id: 1, ...{ ...mockModifyBatch, quantity: -4}});
-        expect(mockRepository.findOne).toHaveBeenCalled();
-        expect(mockRepository.findOne).toHaveBeenCalledWith(1);
+        expect(mockRepository.save).not.toHaveBeenCalled();
+        expect(mockRepository.findOneOrFail).not.toHaveBeenCalled();
   
         expect(batch).not.toBeDefined()
       }
@@ -227,18 +229,18 @@ describe('BatchService', () => {
 
     it('should fail updating a batch because of not existing', async () => {
       jest.spyOn(mockRepository, 'save').mockReturnValue(mockModifyBatch)
-      jest.spyOn(mockRepository, 'findOne').mockReturnValue(undefined)
+      jest.spyOn(mockRepository, 'findOneOrFail').mockReturnValue(undefined)
 
       expect(mockRepository.save).not.toHaveBeenCalled();
-      expect(mockRepository.findOne).not.toHaveBeenCalled();
+      expect(mockRepository.findOneOrFail).not.toHaveBeenCalled();
 
       let batch
       try {
         batch = await service.modify(1, mockModifyBatch)
       }catch(err){
         expect(mockRepository.save).not.toHaveBeenCalled();
-        expect(mockRepository.findOne).toHaveBeenCalled();
-        expect(mockRepository.findOne).toHaveBeenCalledWith(1);
+        expect(mockRepository.findOneOrFail).toHaveBeenCalled();
+        expect(mockRepository.findOneOrFail).toHaveBeenCalledWith(1);
   
         expect(batch).not.toBeDefined()
       }
@@ -252,35 +254,35 @@ describe('BatchService', () => {
   describe('delete', () => {
     it('should delete a batch', async () => {
       jest.spyOn(mockRepository, 'remove').mockReturnValue(mockBatch)
-      jest.spyOn(mockRepository, 'findOne').mockReturnValue(mockBatch)
+      jest.spyOn(mockRepository, 'findOneOrFail').mockReturnValue(mockBatch)
 
       expect(mockRepository.remove).not.toHaveBeenCalled();
-      expect(mockRepository.findOne).not.toHaveBeenCalled();
+      expect(mockRepository.findOneOrFail).not.toHaveBeenCalled();
 
       const batch = await service.delete(1)
 
       expect(mockRepository.remove).toHaveBeenCalled();
       expect(mockRepository.remove).toHaveBeenCalledWith({ id:1 });
-      expect(mockRepository.findOne).toHaveBeenCalled();
-      expect(mockRepository.findOne).toHaveBeenCalledWith(1);
+      expect(mockRepository.findOneOrFail).toHaveBeenCalled();
+      expect(mockRepository.findOneOrFail).toHaveBeenCalledWith(1);
 
       expect(batch).toEqual(mockBatch)
     });
 
     it('should fail deleting a non existing batch', async () => {
       jest.spyOn(mockRepository, 'remove').mockReturnValue(mockBatch)
-      jest.spyOn(mockRepository, 'findOne').mockReturnValue(undefined)
+      jest.spyOn(mockRepository, 'findOneOrFail').mockReturnValue(undefined)
 
       expect(mockRepository.remove).not.toHaveBeenCalled();
-      expect(mockRepository.findOne).not.toHaveBeenCalled();
+      expect(mockRepository.findOneOrFail).not.toHaveBeenCalled();
 
       let batch
       try {
         batch = await service.delete(1)
       }catch(err){
         expect(mockRepository.save).not.toHaveBeenCalled();
-        expect(mockRepository.findOne).toHaveBeenCalled();
-        expect(mockRepository.findOne).toHaveBeenCalledWith(1);
+        expect(mockRepository.findOneOrFail).toHaveBeenCalled();
+        expect(mockRepository.findOneOrFail).toHaveBeenCalledWith(1);
   
         expect(batch).not.toBeDefined()
       }
