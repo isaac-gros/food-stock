@@ -6,3 +6,4 @@ server/node_modules
 .DS_Store
 db/.env
 server/.env
+client/.env
