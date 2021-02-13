@@ -1,4 +1,4 @@
-module.exports = [
+const MockProducts = [
     {
         id: 1,
         name: 'Banane',
@@ -39,3 +39,5 @@ module.exports = [
         ]
     }
 ];
+
+export default MockProducts;

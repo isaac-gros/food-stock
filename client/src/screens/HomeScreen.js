@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import MockProducts from '../../tests/mock/MockProducts';
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -46,6 +47,11 @@ class HomeScreen extends React.Component {
             },
           ],
         },
+        {
+          id: 4,
+          name: 'Pomme',
+          batchs: []
+        }
       ],
     };
   }
@@ -64,7 +70,7 @@ class HomeScreen extends React.Component {
     const data = (this.props.data && this.props.data.length > 0) ? this.props.data : this.state.data;
 
     return (
-      <View>
+      <View id="products">
         {data.map(d => (
           <View key={d.id}>
             <Text>{d.name}</Text>
