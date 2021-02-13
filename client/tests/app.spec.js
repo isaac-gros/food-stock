@@ -1,9 +1,11 @@
 // import React from 'react';
 import { BASE_URL } from '@env';
-// import { create, act } from 'react-test-renderer';
+import React from 'react';
+import { create, act } from 'react-test-renderer';
+import HomeScreen from '../src/screens/HomeScreen';
 // import HomeScreen from '../src/screens/HomeScreen';
-// import MockProducts from '../tests/mock/MockProducts';
 import { Products } from '../src/services/ProductService';
+import MockProducts from '../tests/mock/MockProducts';
 import RequestProvider from "../src/services/RequestProvider";
 
 /**
@@ -14,13 +16,24 @@ jest.mock("../src/services/RequestProvider");
 
 // Set variables
 let products;
+
 // Test to Renderer JSX
-// test("Test", ()=> {
-// 	const snap = create(
-// 		<div><h1>Hello World!</h1></div>
-// 	).toJSON();
-// 	expect(snap).toMatchSnapshot();
-// });
+test("Test", () => {
+	const snap = create(
+		<div><h1>Hello World!</h1></div>
+	).toJSON();
+	expect(snap).toMatchSnapshot();
+});
+
+// Test that the components has been passed
+describe('Products on HomeScreen', () => {
+
+	it('Should render products with data prop', () => {
+		const snap = create(<HomeScreen data={MockProducts} />).toJSON();
+		expect(snap.children).toHaveLength(MockProducts.length);
+	});
+
+});
 
 // Test to renderer the Home screen
 // describe("Products", () => {
@@ -61,20 +74,20 @@ let products;
 // });
 
 describe("Products Service", () => {
-	it('Should return products from db', async() => {
+	it('Should return products from db', async () => {
 		jest.spyOn(RequestProvider, "get").mockResolvedValue({
 			data: [
 				{
-				  id: 2,
-				  name: 'Tomate Séché',
-				  created_at: '2021-02-11T10:01:43.139Z',
-				  batchs: []
+					id: 2,
+					name: 'Tomate Séché',
+					created_at: '2021-02-11T10:01:43.139Z',
+					batchs: []
 				},
 				{
-				  id: 1,
-				  name: 'Carotte Râpé',
-				  created_at: '2021-02-11T10:01:25.157Z',
-				  batchs: []
+					id: 1,
+					name: 'Carotte Râpé',
+					created_at: '2021-02-11T10:01:25.157Z',
+					batchs: []
 				}
 			],
 			status: 200,
